@@ -1,44 +1,66 @@
 
 $(function(){
-	$('#fullpage').fullpage();
 	var portfolioRange = {start: $("#portfolio").offset().top , finish: ($("#portfolio").offset().top + $("#portfolio").outerHeight())- $(window).height()};
 	
 	// get the current window width
 	winWidth = $(window).width();
-	//hide extra portfolio on mobile
-	$(".portfolio-item").each(function(i){
-		if (i >= 1) {
-			$(this).hide();
-		}
-	});
 	
 	//menu items click scrolling
-	$("nav.menu-desktop a").on("click", function(){
+	$("nav.menu-desktop a, .mobile-menu li a").on("click", function(){
 		var clickedItem = $(this).attr("data-scroll");
 		var offsetTop = $("section#"+clickedItem).offset().top;
-		$('html, body').animate({
-	        scrollTop: offsetTop-150
-	    }, 400);
+		if (winWidth < 768) {
+			$('html, body').animate({
+		        scrollTop: offsetTop-150
+		    }, 400);	
+		}
+		else{
+			$('html, body').animate({
+		        scrollTop: offsetTop-100
+		    }, 400);
+		}
 
 	});
 
 	//headshot greeting animation
 	$("img.head-shot").mouseenter(function(e){
-		$("span.greetings").addClass("animated bounceIn");
-		$("span.greetings").css("display", "block");
+		var greetSpan = $("span.greetings");
+		greetSpan.addClass("animated bounceIn");
+		greetSpan.css("display", "block");
 		setTimeout(function(){
-			$("span.greetings").removeClass("animated bounceIn");
-			$("span.greetings").css("display", "none");
+			greetSpan.removeClass("animated bounceIn");
+			greetSpan.css("display", "none");
 			$(this).mouseout(function(){
 				return;
 			})
 		}, 3000)
 	});
+	
+	//open mobile menu on click
+	$("#openMobile").on("click", function(){
+		var body = $("body, html, .mobile-menu-open");
+		if (body.hasClass("mobilePassive")){
+			body.removeClass("mobilePassive");
+			body.addClass("mobileActive");
+			return;	
+		}
+		if (body.hasClass("mobileActive")){
+			body.removeClass("mobileActive");
+			body.addClass("mobilePassive");
+		}
+		
+	});
+
+	//mobile menu items click
+	$(".mobile-menu li a").on("click", function(){
+		var body = $("body, html, .mobile-menu-open");
+		body.removeClass("mobileActive");
+		body.addClass("mobilePassive");
+	});
 
 	//seemore button click toggle
 	$("#togglePortfolio").on("click", function(){
 		if ($(this).hasClass("seeMore")) {
-			console.log("show");
 			$(".portfolio-item").each(function(i){
 					$(this).slideDown();
 				});
@@ -63,7 +85,7 @@ $(function(){
 
 //fixed nav onresize
 	$(window).on("resize", function(){
-			console.log("onresize");
+	console.log("onresize");
 	winWidth = $(window).width();
 	if ( winWidth >= 992) {
 		$("header").addClass("fixed-nav");
